@@ -23,7 +23,7 @@ def main_page():
     st.title("Мы поможем улучшить Ваш промпт!")
     if "placeholder" not in st.session_state:
         st.session_state.placeholder = ''
-        prompt = st.text_input(
+    prompt = st.text_input(
             "Напишите промпт 👇",
             label_visibility=st.session_state.visibility,
             disabled=st.session_state.disabled,
