@@ -20,30 +20,31 @@ def main_page():
     if "visibility" not in st.session_state:
         st.session_state.visibility = "visible"
         st.session_state.disabled = False
-    st.title("We will help you improve your prompt!")
+    st.title("Мы поможем улучшить Ваш промпт!")
     if "placeholder" not in st.session_state:
         st.session_state.placeholder = ''
         prompt = st.text_input(
-            "Enter prompt 👇",
+            "Напишите промпт 👇",
             label_visibility=st.session_state.visibility,
             disabled=st.session_state.disabled,
             placeholder=st.session_state.placeholder,
         )
     instr = st.text_area(
-            "Enter instuction 👇",
+            "Напишите инструкцию 👇",
             label_visibility=st.session_state.visibility,
             disabled=st.session_state.disabled,
             placeholder=st.session_state.placeholder,
         )
     bad_answer = st.text_area(
-            "Enter bad answer 👇",
+            "Напишите плохой ответ 👇",
             label_visibility=st.session_state.visibility,
             disabled=st.session_state.disabled,
             placeholder=st.session_state.placeholder,
         )
     if prompt:
-            st.write("Your prompt: ", prompt)
-            st.write("Recommended prompts: ")
+            st.write("Ваш промпт: ", prompt)
+            st.write("Рекомендованные промпты: ")
+            st.write("Ответ при предложенном промпте")
 
 def main():
     #st.title("Аутентификация по cloud_id")
