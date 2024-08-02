@@ -3,3 +3,4 @@ plotly
 pillow
 streamlit
 requests
+openai>=1.2

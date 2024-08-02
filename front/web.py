@@ -1,6 +1,7 @@
+from openai import OpenAI
 import streamlit as st
 import os
-
+openai_api_key = ""
 # Отображение формы для ввода cloud_id
 def show_input_form():
     st.write("Введите ваш cloud_id:")
@@ -42,9 +43,16 @@ def main_page():
             placeholder=st.session_state.placeholder,
         )
     if prompt:
-            st.write("Ваш промпт: ", prompt)
-            st.write("Рекомендованные промпты: ")
-            st.write("Ответ при предложенном промпте")
+        st.write("Ваш промпт: ", prompt)
+        st.write("Рекомендованные промпты: ")
+        st.write("Ответ при предложенном промпте")
+        client = OpenAI(api_key=openai_api_key)
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        st.chat_message("user").write(prompt)
+        response = client.chat.completions.create(model="gpt-3.5-turbo", messages=st.session_state.messages)
+        msg = response.choices[0].message.content
+        st.session_state.messages.append({"role": "assistant", "content": msg})
+        st.chat_message("assistant").write(msg)
 
 def main():
     #st.title("Аутентификация по cloud_id")
