@@ -1,7 +1,18 @@
 from openai import OpenAI
 import streamlit as st
 import os
-openai_api_key = ""
+from dotenv import load_dotenv
+from st_pages import Page, show_pages
+
+load_dotenv()  # take environment variables from .env.
+show_pages( #они обновили, надо иначе писать
+    [
+        Page("web.py", "Главная", "🏠"),
+        Page("pages/help_class.py", "Поиск достопримечательности по фотографии", "🖼️"),
+        Page("pages/text2place.py", "Поиск достопримечательности по тексту", icon="🔎"),
+        Page("pages/calibr.py", "Построение маршрута", icon="🌎")
+    ]
+)
 # Отображение формы для ввода cloud_id
 def show_input_form():
     st.write("Введите ваш cloud_id:")
@@ -24,6 +35,8 @@ def main_page():
     st.title("Мы поможем улучшить Ваш промпт!")
     if "placeholder" not in st.session_state:
         st.session_state.placeholder = ''
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
     prompt = st.text_input(
             "Напишите промпт 👇",
             label_visibility=st.session_state.visibility,
@@ -46,17 +59,20 @@ def main_page():
         st.write("Ваш промпт: ", prompt)
         st.write("Рекомендованные промпты: ")
         st.write("Ответ при предложенном промпте")
-        client = OpenAI(api_key=openai_api_key)
+        client = OpenAI(api_key = os.environ.get("OPENAI_API_KEY"))
         st.session_state.messages.append({"role": "user", "content": prompt})
         st.chat_message("user").write(prompt)
-        response = client.chat.completions.create(model="gpt-3.5-turbo", messages=st.session_state.messages)
+        response = client.chat.completions.create(model="gpt-4o", messages=st.session_state.messages)
         msg = response.choices[0].message.content
         st.session_state.messages.append({"role": "assistant", "content": msg})
         st.chat_message("assistant").write(msg)
 
 def main():
     #st.title("Аутентификация по cloud_id")
-
+    
+    #st.page_link("web.py", label="Home", icon="🏠")
+    #st.page_link("pages/help_class.py", label="Page 1", icon="1️⃣")
+    #st.page_link("pages/calibr.py", label="Page 2", icon="2️⃣")
     if 'CLOUD_ID' in os.environ:
         main_page()
     else:
