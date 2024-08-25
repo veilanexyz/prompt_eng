@@ -18,7 +18,7 @@ def generate_recommendations(prompt, n=10):
     recommendations = []
     for _ in range(n):
         response = client.Completion.create(
-            engine="text-davinci-003",
+            model="gpt-4o-mini",
             prompt=f"Generate a recommendation based on: {prompt}",
             max_tokens=50
         )
