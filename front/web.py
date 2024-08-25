@@ -18,7 +18,7 @@ def show_input_form():
     if st.button("Сохранить"):
         os.environ['CLOUD_ID'] = cloud_id
         st.success("Cloud ID сохранен. Переход к основной странице...")
-        st.experimental_rerun()  
+        st.rerun()  
 
 def main_page():
     st.title("Мы поможем улучшить Ваш промпт!")
