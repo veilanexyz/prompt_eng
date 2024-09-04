@@ -5,8 +5,7 @@ from dotenv import load_dotenv
 from help_class import classify_prompt, generate_recommendations
 from calibr import calibrate_and_select_best
 
-load_dotenv() 
-
+load_dotenv()
 
 showSidebarNavigation = True
 
@@ -18,9 +17,30 @@ def show_input_form():
     if st.button("Сохранить"):
         os.environ['CLOUD_ID'] = cloud_id
         st.success("Cloud ID сохранен. Переход к основной странице...")
-        st.rerun()  
+        st.rerun()
 
-def main_page():
+
+def classification_page(prompt):
+    if prompt:
+        st.write("Ваш промпт: ", prompt)
+
+        tag = classify_prompt(prompt)
+        st.write(f"Классифицировано как: {tag}")
+        recommendations = generate_recommendations(prompt)
+        st.write("Рекомендованные промпты:")
+        for rec in recommendations:
+            st.write(rec)
+
+
+def calibration_page(prompt):
+    if prompt:
+        recommendations = generate_recommendations(prompt)
+        best_recommendation = calibrate_and_select_best(recommendations)
+        st.write("Лучшая рекомендация:")
+        st.write(best_recommendation)
+
+
+def main_page(selected_page):
     st.title("Мы поможем улучшить Ваш промпт!")
 
     if 'key' not in st.session_state:
@@ -35,7 +55,6 @@ def main_page():
     if "messages" not in st.session_state:
         st.session_state.messages = []
 
-    # Ввод данных пользователем
     prompt = st.text_input(
         "Напишите промпт 👇",
         label_visibility=st.session_state.visibility,
@@ -55,39 +74,27 @@ def main_page():
         placeholder=st.session_state.placeholder,
     )
 
-    if prompt:
-        st.write("Ваш промпт: ", prompt)
-
-        tag = classify_prompt(prompt)
-        st.write(f"Классифицировано как: {tag}")
-        recommendations = generate_recommendations(prompt)
-        st.write("Рекомендованные промпты:")
-        for rec in recommendations:
-            st.write(rec)
-
-
-        best_recommendation = calibrate_and_select_best(recommendations)
-        st.write("Лучшая рекомендация:")
-        st.write(best_recommendation)
+    # Вызываем функции в зависимости от выбранной страницы
+    if selected_page == "Классификация":
+        classification_page(prompt)
+    elif selected_page == "Калибровка и улучшение":
+        calibration_page(prompt)
 
 
 def sidebar_navigation():
     st.sidebar.title("Навигация")
     selected_page = st.sidebar.selectbox("Выберите страницу:", ["Классификация", "Калибровка и улучшение"])
-    
-    if selected_page == "Классификация":
-        st.sidebar.write("Страница классификации промптов")
-    elif selected_page == "Калибровка и улучшение":
-        st.sidebar.write("Страница калибровки и улучшения")
+    return selected_page
 
 
 def main():
     if 'CLOUD_ID' in os.environ:
         if showSidebarNavigation:
-            sidebar_navigation()
-        main_page()
+            selected_page = sidebar_navigation()
+            main_page(selected_page)
     else:
         show_input_form()
+
 
 if __name__ == "__main__":
     main()
