@@ -4,6 +4,7 @@ from openai import OpenAI
 from dotenv import load_dotenv
 from help_class import classify_prompt, generate_recommendations
 from calibr import calibrate_and_select_best
+from yandexgpt import generate_answers
 
 load_dotenv()
 
@@ -74,7 +75,6 @@ def main_page(selected_page):
         placeholder=st.session_state.placeholder,
     )
 
-    # Вызываем функции в зависимости от выбранной страницы
     if selected_page == "Классификация":
         classification_page(prompt)
     elif selected_page == "Калибровка и улучшение":

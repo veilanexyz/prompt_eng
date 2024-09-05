@@ -16,7 +16,7 @@ def classify_prompt(prompt):
     else:
         return "другое"
 
-def generate_recommendations(prompt, n=10):
+def generate_recommendations(prompt, n=5):
     recommendations = []
     for _ in range(n):
         response = client.chat.completions.create(
