@@ -6,3 +6,4 @@ requests
 openai>=1.2
 python-dotenv
 st_pages
+requests

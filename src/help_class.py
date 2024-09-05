@@ -21,7 +21,7 @@ def generate_recommendations(prompt, n=10):
     for _ in range(n):
         response = client.chat.completions.create(
             model="gpt-4o-mini",
-            messages=[{"role": "user", "content": f"Generate a recommendation based on: {prompt}"}],
+            messages=[{"role": "user", "content": f"Предложи несколько промптов для более хорошего ответа на основе этого промпта {prompt}"}],
             max_tokens=50
         )
         recommendation = response.choices[0].message.content
