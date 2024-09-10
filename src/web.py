@@ -2,8 +2,8 @@ import streamlit as st
 import os
 from openai import OpenAI
 from dotenv import load_dotenv
-from help_class import classify_prompt, generate_recommendations
-from calibr import calibrate_and_select_best
+from first import recommendations
+from second import calibrate_and_select_best, generate_recommendations
 from yandexgpt import generate_answers
 
 load_dotenv()
@@ -21,19 +21,15 @@ def show_input_form():
         st.rerun()
 
 
-def classification_page(prompt):
+def recommendation_page(prompt):
     if prompt:
         st.write("Ваш промпт: ", prompt)
-
-        tag = classify_prompt(prompt)
-        st.write(f"Классифицировано как: {tag}")
-        recommendations = generate_recommendations(prompt)
-        st.write("Рекомендованные промпты:")
-        for rec in recommendations:
-            st.write(rec)
+        rec = recommendations(prompt)
+        st.write("Рекомендации по улучшению промпта:")
+        st.write(rec)
 
 
-def calibration_page(prompt):
+def improve_page(prompt):
     if prompt:
         recommendations = generate_recommendations(prompt)
         best_recommendation = calibrate_and_select_best(recommendations)
@@ -62,28 +58,29 @@ def main_page(selected_page):
         disabled=st.session_state.disabled,
         placeholder=st.session_state.placeholder,
     )
-    instr = st.text_area(
-        "Напишите инструкцию 👇",
-        label_visibility=st.session_state.visibility,
-        disabled=st.session_state.disabled,
-        placeholder=st.session_state.placeholder,
-    )
-    bad_answer = st.text_area(
-        "Напишите плохой ответ 👇",
-        label_visibility=st.session_state.visibility,
-        disabled=st.session_state.disabled,
-        placeholder=st.session_state.placeholder,
-    )
+    if selected_page == "Улучшение промпта":
+        instr = st.text_area(
+            "Напишите инструкцию 👇",
+            label_visibility=st.session_state.visibility,
+            disabled=st.session_state.disabled,
+            placeholder=st.session_state.placeholder,
+        )
+        bad_answer = st.text_area(
+            "Напишите плохой ответ 👇",
+            label_visibility=st.session_state.visibility,
+            disabled=st.session_state.disabled,
+            placeholder=st.session_state.placeholder,
+        )
 
-    if selected_page == "Классификация":
-        classification_page(prompt)
-    elif selected_page == "Калибровка и улучшение":
-        calibration_page(prompt)
+    if selected_page == "Рекомендации":
+        recommendation_page(prompt)
+    elif selected_page == "Улучшение промпта":
+        improve_page(prompt)
 
 
 def sidebar_navigation():
     st.sidebar.title("Навигация")
-    selected_page = st.sidebar.selectbox("Выберите страницу:", ["Классификация", "Калибровка и улучшение"])
+    selected_page = st.sidebar.selectbox("Выберите страницу:", ["Рекомендации", "Улучшение промпта"])
     return selected_page
 
 
