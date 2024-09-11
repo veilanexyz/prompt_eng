@@ -52,7 +52,7 @@ def main_page(selected_page):
     if "messages" not in st.session_state:
         st.session_state.messages = []
 
-    prompt = st.text_input(
+    prompt = st.text_area(
         "Напишите промпт 👇",
         label_visibility=st.session_state.visibility,
         disabled=st.session_state.disabled,

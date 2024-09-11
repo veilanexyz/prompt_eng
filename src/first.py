@@ -30,7 +30,7 @@ def recommendations(prompt):
         model="gpt-4o-mini",
         messages=[
             {"role": "user", 
-            "content": f"Напиши несколько рекомендаций для данного промпта: {prompt}, используя для составления рекомендаций данное руководство: {metaprompt}"}],
+            "content": f"Напиши несколько рекомендаций для данного промпта: {prompt}, используя для составления рекомендаций данное руководство: {metaprompt}. Напиши законченный ответ не превышающий 1000 токенов"}],
             max_tokens=1000
     )
     recommendation = response.choices[0].message.content
