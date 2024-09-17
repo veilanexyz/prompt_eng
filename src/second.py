@@ -5,9 +5,9 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-#добавь:нормальная классификация, использующая гптшку
+
 api_key = os.getenv("OPENAI_API_KEY")
-client = OpenAI(api_key=str(api_key))
+client = OpenAI(api_key=str(api_key), base_url="https://openai-proxy-vercel-gamma.vercel.app/v1/")
 
 def calibrate_and_select_best(recommendations):
     best_recommendation = "1"

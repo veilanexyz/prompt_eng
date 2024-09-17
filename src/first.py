@@ -7,7 +7,7 @@ from st_pages import Page
 load_dotenv()
 
 api_key = os.getenv("OPENAI_API_KEY")
-client = OpenAI(api_key=str(api_key))
+client = OpenAI(api_key=str(api_key), base_url="https://openai-proxy-vercel-gamma.vercel.app/v1/")
 
 def get_recs_data() -> str:
     folder_path = "../gpt-prompting-guide" 
