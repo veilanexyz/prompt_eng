@@ -3,28 +3,21 @@ import streamlit as st
 import os
 from dotenv import load_dotenv
 from st_pages import Page
+from functools import lru_cache
 
 load_dotenv()
 
 api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key=str(api_key), base_url="https://openai-proxy-vercel-gamma.vercel.app/v1/")
-
-def get_recs_data() -> str:
-    folder_path = "../gpt-prompting-guide" 
-    combined_text = ""
+file_path = os.path.join(os.getcwd(), "combined_text.md")
     
-    for root, _, files in os.walk(folder_path):
-        for file in files:
-            if file.endswith(".md"):
-                file_path = os.path.join(root, file)
-                
-                with open(file_path, 'r', encoding='utf-8') as f:
-                    combined_text += f.read() + "\n" 
-    
-    return combined_text
+@lru_cache(maxsize=1)
+def get_metaprompt():
+    with open(file_path, 'r', encoding='utf-8') as f:
+        return f.read()
 
-metaprompt = get_recs_data()
-#добавь: здесь будут выводиться рекомендации из доки по улучшению
+metaprompt = get_metaprompt()
+
 def recommendations(prompt):
     response = client.chat.completions.create(
         model="gpt-4o-mini",
