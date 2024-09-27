@@ -17,8 +17,8 @@ def show_input_form():
     st.write("Введите ваш Cloud ID:")
     cloud_id = st.text_input("Cloud ID")
 
-    if st.button("Сохранить") and cloud_id==os.getenv("CLOUD_ID"):
-        #os.environ['CLOUD_ID'] = cloud_id
+    if st.button("Сохранить"):
+        os.environ['CLOUD_ID'] = cloud_id
         st.success("Cloud ID сохранен. Переход к основной странице...")
         st.rerun()
 
@@ -45,8 +45,6 @@ def recommendation_page(prompt):
 def improve_page(prompt):
     if prompt:
         recommendations = generate_recommendations(prompt)
-        best_recommendation = calibrate_and_select_best(recommendations)
-        ans = generate_answers(recommendations)
         """
         stored_data = {
             "prompt": prompt,
@@ -63,8 +61,10 @@ def improve_page(prompt):
         """
         st.write("Предложенные промпты:")
         st.write(recommendations)
+        ans = generate_answers(recommendations)
         st.write("Ответы, выдаваемые при этом YandexGPT")
         st.write(ans)
+        best_recommendation = calibrate_and_select_best(ans)
         st.write("Лучшая рекомендация:")
         st.write(best_recommendation)
 

@@ -22,7 +22,7 @@ def generate_answers(recommendations):
             "completionOptions": {
                 "stream": False,
                 "temperature": 0.6,
-                "maxTokens": "2000"
+                "maxTokens": "1000"
             },
             "messages": [
                 {
@@ -34,12 +34,10 @@ def generate_answers(recommendations):
 
         response = requests.post(url, headers=headers, json=prompt)
 
-        try:
-            response_json = response.json()
-            message_text = response_json['result']['alternatives'][0]['message']['text']
-            result.append(message_text)
-        except (json.JSONDecodeError, KeyError):
-            result.append("Ошибка: не удалось получить корректный ответ.")
-
+        response_json = response.json()
+        message_text = response_json['result']['alternatives'][0]['message']['text']
+        print(message_text)
+        result.append(message_text)
+        
     return "\n".join(result) 
 

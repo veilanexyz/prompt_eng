@@ -1,4 +1,3 @@
-#тоже как в примере с клаудом + в доке есть нюансы можно руками дописать (добавить ягпт)
 from openai import OpenAI
 import streamlit as st
 from yandexgpt import generate_answers
@@ -31,19 +30,23 @@ def calibrate_and_select_best(recommendations, n=5):
                 i: response.choices[0].message.content,
                 "ans":recommendations[i]
             }
-    best_recommendation = rec.sort(key=i)[0]
-    return best_recommendation
+    print(rec)
+    #best_recommendation = rec[0]
+    return 1
 
 def generate_recommendations(prompt, n=5):
-    recommendations = []
-    for _ in range(n):
-        response = client.chat.completions.create(
+    #recommendations = []
+    #for _ in range(n):
+    response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[{"role": "user", 
                        "content": f"Предложи промпт для более хорошего ответа на основе этого промпта {prompt}. Используй для качественного составления руководство {metaprompt}, но не предлагай ответы из него, оно только для тебя"
                        }],
-            max_tokens=500
+            max_tokens=500,
+            n = 5
         )
-        recommendation = response.choices[0].message.content
-        recommendations.append(recommendation)
-    return '/n'.join(recommendations)
+    
+    recommendations = response.choices
+    print(recommendations)
+    #recommendations.append(recommendation)
+    return recommendations
