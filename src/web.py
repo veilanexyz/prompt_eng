@@ -46,7 +46,10 @@ def improve_page(prompt):
     if prompt:
         recommendations = generate_recommendations(prompt)
         st.header("Предложенные промпты:")
-        st.write(recommendations)
+        for i, val in enumerate(recommendations):
+            st.subheader(f"Промпт #{i + 1}")
+            st.write(val)
+        # st.write(recommendations)
         ans = generate_answers(recommendations)
         n = len(ans)
         st.header("Ответы, выдаваемые при этом YandexGPT")
