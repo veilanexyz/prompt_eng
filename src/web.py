@@ -45,7 +45,6 @@ def recommendation_page(prompt):
 def improve_page(prompt):
     if prompt:
         recommendations = generate_recommendations(prompt)
-        """
         stored_data = {
             "prompt": prompt,
             "recommendations_prompts": recommendations,
@@ -58,14 +57,15 @@ def improve_page(prompt):
                 "data": stored_data,
             }
         )
-        """
-        st.write("Предложенные промпты:")
+        st.header("Предложенные промпты:")
         st.write(recommendations)
         ans = generate_answers(recommendations)
-        st.write("Ответы, выдаваемые при этом YandexGPT")
-        st.write(ans)
-        best_recommendation = calibrate_and_select_best(ans)
-        st.write("Лучшая рекомендация:")
+        n = len(ans)
+        st.header("Ответы, выдаваемые при этом YandexGPT")
+        for i in range(n):
+            st.write(ans[i])
+        best_recommendation = calibrate_and_select_best(recommendations, ans, n)
+        st.header("Лучшая рекомендация:")
         st.write(best_recommendation)
 
 

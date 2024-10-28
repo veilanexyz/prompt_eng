@@ -17,36 +17,45 @@ def get_metaprompt():
 
 metaprompt = get_metaprompt()
 
-def calibrate_and_select_best(recommendations, n=5):
+def calibrate_and_select_best(recommendations, ans, n):
+    ranked_recommendations = {}
+
     for i in range(n):
         response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[{"role": "user", 
-                        "content": f"Выведи цифру {recommendations[i]}"
-                        }],
-                max_tokens=1
-            )
-        rec = {
-                i: response.choices[0].message.content,
-                "ans":recommendations[i]
-            }
-    print(rec)
-    #best_recommendation = rec[0]
-    return 1
+            model="gpt-4o-mini",
+            messages=[{
+                "role": "user", 
+                "content": f"Оцени ответ по шкале от 1 до 10, где 10 — лучший: {ans[i]}. Ответь только числом. Не нужны ни приветствия, ни подтверждения того, что ты меня поняла. Только число от 1 до 10. Тебе нельзя использовать слова, можно использовать только число от 1 до 10"
+            }],
+            max_tokens=100
+        )
+        
+        rank_text = response.choices[0].message.content.strip()
+        print(rank_text)
+        try:
+            rank = int(rank_text)
+        except ValueError:
+            print(f"Невалидный ответ: {rank_text}, пропускаю...")
+            continue
+        ranked_recommendations[rank] = recommendations[i]
+    
+    if not ranked_recommendations:
+        return None
+    
+    best_rank = max(ranked_recommendations.keys())
+    best_recommendation = ranked_recommendations[best_rank]
+    return best_recommendation
 
 def generate_recommendations(prompt, n=5):
-    #recommendations = []
-    #for _ in range(n):
     response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "user", 
-                       "content": f"Предложи промпт для более хорошего ответа на основе этого промпта {prompt}. Используй для качественного составления руководство {metaprompt}, но не предлагай ответы из него, оно только для тебя"
-                       }],
-            max_tokens=500,
-            n = 5
-        )
+        model="gpt-4o-mini",
+        messages=[{
+            "role": "user", 
+            "content": f"Предложи промпт для более хорошего ответа на основе этого промпта: {prompt}. Используй для качественного составления руководство {metaprompt}, но не предлагай ответы из него, оно только для тебя."
+        }],
+        max_tokens=500,  
+        n=n
+    )
     
-    recommendations = response.choices
-    print(recommendations)
-    #recommendations.append(recommendation)
+    recommendations = [choice.message.content for choice in response.choices]
     return recommendations

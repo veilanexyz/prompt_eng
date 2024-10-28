@@ -1,2 +1,4 @@
 .env
 src/combined_text.md
+__pycache__/
+.DS_store

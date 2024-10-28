@@ -33,11 +33,20 @@ def generate_answers(recommendations):
         }
 
         response = requests.post(url, headers=headers, json=prompt)
-
         response_json = response.json()
-        message_text = response_json['result']['alternatives'][0]['message']['text']
-        print(message_text)
-        result.append(message_text)
         
-    return "\n".join(result) 
-
+        # Проверка, чтобы исключить ошибки и извлечь только текст
+        if 'result' in response_json:
+            try:
+                message_text = response_json['result']['alternatives'][0]['message']['text']
+                result.append(message_text)
+            except (KeyError, IndexError):
+                result.append("Ошибка: Невозможно извлечь текст ответа.")
+        elif 'error' in response_json:
+            error_message = response_json['error'].get('message', 'Неизвестная ошибка')
+            result.append(f"Ошибка API: {error_message}")
+        else:
+            result.append("Ошибка: неожиданный формат ответа от API.")
+    
+    # Возвращаем результат с разделителем
+    return result
