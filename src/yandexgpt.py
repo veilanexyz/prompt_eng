@@ -14,7 +14,6 @@ def generate_answers(recommendations):
         "Content-Type": "application/json",
         "Authorization": f"Api-Key {yapi}"
     }
-
     result = []
     for recommendation in recommendations:
         prompt = {
@@ -34,8 +33,6 @@ def generate_answers(recommendations):
 
         response = requests.post(url, headers=headers, json=prompt)
         response_json = response.json()
-        
-        # Проверка, чтобы исключить ошибки и извлечь только текст
         if 'result' in response_json:
             try:
                 message_text = response_json['result']['alternatives'][0]['message']['text']
@@ -48,5 +45,4 @@ def generate_answers(recommendations):
         else:
             result.append("Ошибка: неожиданный формат ответа от API.")
     
-    # Возвращаем результат с разделителем
     return result

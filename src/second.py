@@ -31,7 +31,6 @@ def calibrate_and_select_best(recommendations, ans, n):
         )
         
         rank_text = response.choices[0].message.content.strip()
-        print(rank_text)
         try:
             rank = int(rank_text)
         except ValueError:

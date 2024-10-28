@@ -45,6 +45,17 @@ def recommendation_page(prompt):
 def improve_page(prompt):
     if prompt:
         recommendations = generate_recommendations(prompt)
+        st.header("Предложенные промпты:")
+        st.write(recommendations)
+        ans = generate_answers(recommendations)
+        n = len(ans)
+        st.header("Ответы, выдаваемые при этом YandexGPT")
+        for i in range(n):
+            st.subheader(f'Ответ {i+1}')
+            st.write(ans[i])
+        best_recommendation = calibrate_and_select_best(recommendations, ans, n)
+        st.header("Лучшая рекомендация:")
+        st.write(best_recommendation)
         stored_data = {
             "prompt": prompt,
             "recommendations_prompts": recommendations,
@@ -57,16 +68,6 @@ def improve_page(prompt):
                 "data": stored_data,
             }
         )
-        st.header("Предложенные промпты:")
-        st.write(recommendations)
-        ans = generate_answers(recommendations)
-        n = len(ans)
-        st.header("Ответы, выдаваемые при этом YandexGPT")
-        for i in range(n):
-            st.write(ans[i])
-        best_recommendation = calibrate_and_select_best(recommendations, ans, n)
-        st.header("Лучшая рекомендация:")
-        st.write(best_recommendation)
 
 
 def main_page(selected_page):
@@ -116,14 +117,34 @@ def sidebar_navigation():
     return selected_page
 
 
-def main():
-    if 'CLOUD_ID' in os.environ:
-        if showSidebarNavigation:
-            selected_page = sidebar_navigation()
-            main_page(selected_page)
-    else:
-        show_input_form()
+stored_cloud_id = os.getenv("CLOUD_ID")
 
+def main():
+    if "access_granted" not in st.session_state:
+        st.session_state.access_granted = False
+
+    if not st.session_state.access_granted:
+        user_cloud_id = st.text_input("Введите ваш CLOUD_ID", type="password")
+        
+        if st.button("Войти"):
+            if user_cloud_id == stored_cloud_id:
+                st.success("Доступ разрешён.")
+                
+                st.session_state.access_granted = True
+                
+                selected_page = sidebar_navigation()
+                main_page(selected_page)
+                st.rerun()
+            else:
+                st.error("Неверный CLOUD_ID. Доступ запрещён.")
+    else:
+        selected_page = sidebar_navigation()
+        main_page(selected_page)
+
+def load_main_content():
+    if showSidebarNavigation:
+        selected_page = sidebar_navigation()
+        main_page(selected_page)
 
 if __name__ == "__main__":
     main()
