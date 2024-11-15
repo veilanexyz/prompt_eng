@@ -13,6 +13,9 @@ showSidebarNavigation = True
 
 client = PocketBase('https://ape.merkulov.ai')
 
+LOGO_PATH = "/Users/veilane/Documents/projects/prompt_eng/images/logo_white_full.svg" 
+FOOTER_TEXT = "© 2024 Разработчик - Набатова Лера"
+
 def show_input_form():
     st.write("Введите ваш Cloud ID:")
     cloud_id = st.text_input("Cloud ID")
@@ -42,9 +45,9 @@ def recommendation_page(prompt):
         st.write(rec)
 
 
-def improve_page(prompt):
+def improve_page(prompt, bad_answer):
     if prompt:
-        recommendations = generate_recommendations(prompt)
+        recommendations = generate_recommendations(prompt, bad_answer)
         st.header("Предложенные промпты:")
         for i, val in enumerate(recommendations):
             st.subheader(f"Промпт #{i + 1}")
@@ -74,6 +77,9 @@ def improve_page(prompt):
 
 
 def main_page(selected_page):
+    if os.path.exists(LOGO_PATH):
+        st.image(LOGO_PATH, use_column_width=True)
+
     st.title("Мы поможем улучшить Ваш промпт!")
 
     if 'key' not in st.session_state:
@@ -95,12 +101,6 @@ def main_page(selected_page):
         placeholder=st.session_state.placeholder,
     )
     if selected_page == "Улучшение промпта":
-        instr = st.text_area(
-            "Напишите инструкцию 👇",
-            label_visibility=st.session_state.visibility,
-            disabled=st.session_state.disabled,
-            placeholder=st.session_state.placeholder,
-        )
         bad_answer = st.text_area(
             "Напишите плохой ответ 👇",
             label_visibility=st.session_state.visibility,
@@ -111,7 +111,11 @@ def main_page(selected_page):
     if selected_page == "Рекомендации":
         recommendation_page(prompt)
     elif selected_page == "Улучшение промпта":
-        improve_page(prompt)
+        improve_page(prompt, bad_answer)
+    
+    st.markdown(f"<div style='text-align: center; margin-top: 50px; color: gray;'>{FOOTER_TEXT}</div>", unsafe_allow_html=True)
+
+
 
 
 def sidebar_navigation():

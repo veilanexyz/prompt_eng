@@ -45,7 +45,7 @@ def calibrate_and_select_best(recommendations, ans, n):
     best_recommendation = ranked_recommendations[best_rank]
     return best_recommendation
 
-def generate_recommendations(prompt, n=5):
+def generate_recommendations(prompt, bad_answer, n=5):
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
@@ -55,7 +55,7 @@ def generate_recommendations(prompt, n=5):
             },
             {
                 "role": "user", 
-                "content": f"""Как улучшить этот промпт? Уточни, какие требования и критерии должны быть учтены для лучшего результата, и переформулируй его, чтобы он был более четким и конкретным. В ответ дай только улучшенную версию моего промпта (запроса).\n\n###НАЧАЛО ПОЛЬЗВАТЕЛЬСКОГО ЗАПРОСА###\n{prompt}"""
+                "content": f"""Как улучшить этот промпт? Уточни, какие требования и критерии должны быть учтены для лучшего результата, и переформулируй его, чтобы он был более четким и конкретным. В ответ дай только улучшенную версию моего промпта (запроса). Учти {bad_answer}, это плохой ответ и нужно написать совсем иначе.\n\n###НАЧАЛО ПОЛЬЗВАТЕЛЬСКОГО ЗАПРОСА###\n{prompt}"""
             },
         ],
         max_tokens=500,  
